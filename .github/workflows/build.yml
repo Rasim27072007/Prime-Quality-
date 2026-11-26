@@ -12,27 +12,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Depoyu çek
+      - name: Depoyu çək
         uses: actions/checkout@v4
 
-      - name: JDK 17 kur
+      - name: JDK 17 qur
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Gradle kur (önbellekli)
+      - name: Gradle qur
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
 
-      - name: gradlew çalıştırma izni ver
-        run: chmod +x ./gradlew
+      - name: Debug APK yığ
+        run: |
+          if [ -f ./gradlew ]; then
+            chmod +x ./gradlew
+            ./gradlew assembleDebug --stacktrace
+          else
+            gradle assembleDebug --stacktrace
+          fi
 
-      - name: Debug APK derle
-        run: ./gradlew assembleDebug --stacktrace
-
-      - name: APK'yı yükle
+      - name: APK-nı yüklə
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          path: "**/build/outputs/apk/debug/*.apk"
           if-no-files-found: error
